@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Workspace & AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 1px;
+            background: #1e293b;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .nav-item {
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        .nav-item.active {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        /* WORKSPACE AREA */
+        .workspace-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            gap: 1px;
+            background: #334155;
+        }
+
+        /* EDITOR PANEL */
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f172a;
+            overflow: hidden;
+        }
+
+        .editor-tabs {
+            display: flex;
+            border-bottom: 1px solid #334155;
+            background: #1e293b;
+            padding: 0 10px;
+            gap: 5px;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+
+        .tab:hover {
+            color: #cbd5e1;
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .editor-content textarea {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .document-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #60a5fa;
+        }
+
+        .section-content {
+            color: #cbd5e1;
+            line-height: 1.7;
+        }
+
+        .edit-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* CHAT & RESULTS PANEL */
+        .right-panel {
+            width: 450px;
+            background: #1e293b;
+            border-left: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #334155;
+            background: #0f172a;
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .panel-tab.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+
+        /* CHAT SECTION */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.ai .message-content {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .message.user .message-content {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message.ai .message-avatar {
+            background: #1e40af;
+            color: #60a5fa;
+        }
+
+        .message.user .message-avatar {
+            background: #0f766e;
+            color: #14b8a6;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid #334155;
+            background: #0f172a;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            font-size: 13px;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: #1e293b;
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: #3b82f6;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #2563eb;
+        }
+
+        /* RESULTS TABLE SECTION */
+        .results-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            background: #0f172a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead {
+            background: #1e293b;
+            position: sticky;
+            top: 0;
+        }
+
+        th {
+            padding: 10px;
+            text-align: left;
+            color: #94a3b8;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #334155;
+            color: #cbd5e1;
+        }
+
+        tr:hover {
+            background: #1e293b;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 4px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .action-btn.edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn.edit:hover {
+            background: #2563eb;
+        }
+
+        .action-btn.delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #dc2626;
+        }
+
+        .action-btn.view {
+            background: #10b981;
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            background: #059669;
+        }
+
+        /* STATUS BADGE */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fbbf24;
+            color: #78350f;
+        }
+
+        .status-completed {
+            background: #10b981;
+            color: #065f46;
+        }
+
+        .status-error {
+            background: #ef4444;
+            color: #7f1d1d;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .right-panel {
+                width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <span>Agent AI</span>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Workspace</div>
+                <div class="nav-item active">
+                    <span class="icon">📁</span>
+                    <span>KAK - Procurement 2026</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Tender Analysis Q1</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Vendor Evaluation</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Tools</div>
+                <div class="nav-item">
+                    <span class="icon">🔍</span>
+                    <span>Semantic Search</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">📄</span>
+                    <span>KAK Generator</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Procurement Data</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Settings</div>
+                <div class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Preferences</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>Profile</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-title">KAK - Kerangka Acuan Kerja 2026</div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">Save Draft</button>
+                    <button class="btn btn-primary">Publish</button>
+                </div>
+            </div>
+
+            <!-- WORKSPACE AREA -->
+            <div class="workspace-area">
+                <!-- EDITOR PANEL -->
+                <div class="editor-panel">
+                    <div class="editor-tabs">
+                        <button class="tab active">📄 KAK Document</button>
+                        <button class="tab">💬 Comments</button>
+                        <button class="tab">📝 Revisions</button>
+                    </div>
+
+                    <div class="editor-content">
+                        <div class="document-section">
+                            <div class="section-title">I. PENDAHULUAN</div>
+                            <div class="section-content">
+                                Kerangka Acuan Kerja ini disusun sebagai pedoman dalam melaksanakan proses pengadaan barang dan jasa yang sesuai dengan standar dan regulasi pemerintah.
+                            </div>
+                            <div class="edit-hint">💡 Tip: Tekan Ctrl+E untuk menyunting atau minsta AI Agent untuk memperbaiki</div>
+                        </div>
+
+                        <div class="document-section">
+                            <div class="section-title">II. LATAR BELAKANG</div>
+                            <div class="section-content">
+                                Pengadaan ini diperlukan untuk mendukung operasional dan peningkatan kapasitas organisasi dalam memberikan layanan publik yang berkualitas.
+                            </div>
+                        </div>
+
+                        <div class="document-section">
+                            <div class="section-title">III. TUJUAN DAN MANFAAT</div>
+                            <div class="section-content">
+                                Tujuan: Mengadakan layanan konsultasi untuk pengembangan sistem informasi manajemen.<br><br>
+                                Manfaat: Meningkatkan efisiensi operasional dan kualitas layanan.
+                            </div>
+                        </div>
+
+                        <div class="document-section">
+                            <div class="section-title">IV. RUANG LINGKUP PEKERJAAN</div>
+                            <div class="section-content">
+                                <strong>Fase 1:</strong> Analisis kebutuhan dan assessment sistem existing<br>
+                                <strong>Fase 2:</strong> Desain solusi sistem informasi<br>
+                                <strong>Fase 3:</strong> Implementasi dan testing<br>
+                                <strong>Fase 4:</strong> Training dan support
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL (Chat & Results) -->
+                <div class="right-panel">
+                    <div class="panel-tabs">
+                        <button class="panel-tab active">💬 Agent 1: Q&A</button>
+                        <button class="panel-tab">📊 Agent 2: Results</button>
+                    </div>
+
+                    <!-- CHAT SECTION -->
+                    <div class="chat-container">
+                        <div class="messages">
+                            <div class="message ai">
+                                <div class="message-avatar">AI</div>
+                                <div class="message-content">
+                                    Halo! Saya Agent 1 (Semantic/QA Procurement). Saya siap menjawab pertanyaan tentang regulasi procurement pemerintah. Ada yang bisa saya bantu?
+                                </div>
+                            </div>
+
+                            <div class="message user">
+                                <div class="message-avatar">U</div>
+                                <div class="message-content">
+                                    Apa saja syarat untuk pengadaan di atas 100 juta?
+                                </div>
+                            </div>
+
+                            <div class="message ai">
+                                <div class="message-avatar">AI</div>
+                                <div class="message-content">
+                                    Untuk pengadaan di atas Rp 100 juta, berlaku peraturan sebagai berikut:<br>
+                                    • Harus melalui proses tender/lelang<br>
+                                    • Minimal 3 calon penyedia<br>
+                                    • Pengumuman di media massa resmi<br>
+                                    • Penetapan harga wajar sebelumnya
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <div class="input-group">
+                                <textarea class="chat-input" placeholder="Tanya tentang procurement..."></textarea>
+                                <button class="send-btn">➤</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UNTUK AGENT 2 RESULTS (Hidden by default) -->
+    <script>
+        document.querySelector('[class="panel-tab"]').addEventListener('click', () => {
+            alert('Klik Tab "Agent 2: Results" untuk melihat tabel hasil');
+        });
+    </script>
+</body>
+</html>
